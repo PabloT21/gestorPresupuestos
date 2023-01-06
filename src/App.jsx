@@ -31,6 +31,7 @@ const handleNuevoGasto = () => {
 
 const guardarGasto = gasto => {
   gasto.id = generarId();
+  gasto.fecha = Date.now()
   setGastos([...gastos, gasto]) // Le agrego gasto, a lo que habia en gastos
 
   setAnimarModal(false)
