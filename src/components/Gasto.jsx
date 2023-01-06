@@ -24,9 +24,9 @@ const Gasto = ({gasto}) => {
     return (
         <div className='gasto sombra'>
             <div className='contenido-gasto'>
-                <img >
+                <img 
                   src={diccionarioIconos[gasto.categoria]}
-                </img>
+                />
                 
                 <div className='descripcion-gasto'>
                     <p className="categoria">
