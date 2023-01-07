@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import Header from './components/Header'
 import Modal from './components/Modal'
 import ListadoGastos from './components/ListadoGastos'
@@ -19,10 +19,21 @@ const [animarModal, setAnimarModal] = useState(false)
 
 const [gastos,setGastos] = useState([])
 
+const [gastoEditar, setGastoEditar] = useState({})
+
+useEffect(() => {
+  if(Object.keys(gastoEditar).length){
+    setModal(true)
+    setTimeout(() => {
+      setAnimarModal(true);  
+    },500)
+  }
+}, [gastoEditar])
+
 
 const handleNuevoGasto = () => {
   setModal(true)
-  
+  setGastoEditar({})
   setTimeout(() => {
     setAnimarModal(true);  
   },500)
@@ -30,10 +41,17 @@ const handleNuevoGasto = () => {
 
 
 const guardarGasto = gasto => {
-  gasto.id = generarId();
-  gasto.fecha = Date.now()
-  setGastos([...gastos, gasto]) // Le agrego gasto, a lo que habia en gastos
-
+  if(gasto.id){
+    // Actualizar dato existente
+    const gastosActualizados = gastos.map( gastoState => gastoState.id === gasto.id ? gasto: gastoState)
+    setGastos(gastosActualizados)
+  }
+  else{
+    // Si es nuevo gasto
+    gasto.id = generarId();
+    gasto.fecha = Date.now()
+    setGastos([...gastos, gasto]) // Le agrego gasto, a lo que habia en gastos
+  }
   setAnimarModal(false)
 
   setTimeout(()=> {
@@ -41,9 +59,16 @@ const guardarGasto = gasto => {
   },500)
 }
 
+const eliminarGasto = id => {
+  const gastosActualizados = gastos.filter(gasto => gasto.id !== id)
+
+  setGastos(gastosActualizados)
+}
+
   return (
     <div className={modal ? 'fijar' : ''}>
        <Header  
+          gastos={gastos}
           presupuesto={presupuesto}
           setPresupuesto={setPresupuesto}
           isValidPresupuesto={isValidPresupuesto}
@@ -55,6 +80,8 @@ const guardarGasto = gasto => {
           <main>
             <ListadoGastos
               gastos={gastos}
+              setGastoEditar={setGastoEditar}
+              eliminarGasto={eliminarGasto}
             ></ListadoGastos>
           </main>
         <div className='nuevo-gasto'>
@@ -77,6 +104,8 @@ const guardarGasto = gasto => {
         animarModal={animarModal}
         setAnimarModal={setAnimarModal}
         guardarGasto={guardarGasto}
+        gastoEditar={gastoEditar}
+        setGastoEditar={setGastoEditar}
       />
     ) : null}
       
